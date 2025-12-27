@@ -3,8 +3,8 @@ import time
 import sqlite3
 from datetime import date
 
-# ================= DATABASE =================
-conn = sqlite3.connect("tasks.db", check_same_thread=False)
+# DATABASE
+conn = sqlite3.connect("database.db", check_same_thread=False)
 cursor = conn.cursor()
 
 cursor.execute("""
@@ -17,8 +17,9 @@ CREATE TABLE IF NOT EXISTS tasks (
 )
 """)
 conn.commit()
+#------------------------------------------------------------------------
 
-# ================= SESSION STATE =================
+#SESSION STATE 
 defaults = {
     "animated": False,
     "page": "Welcome",
@@ -30,8 +31,9 @@ defaults = {
 for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
+#---------------------------------------------------------------------
 
-# ================= CSS =================
+# BACKGROUND (CSS)
 st.markdown("""
 <style>
 .stApp { background: #ffffff; font-family: 'Inter', sans-serif; }
@@ -53,12 +55,13 @@ div.stButton > button {
 </style>
 """, unsafe_allow_html=True)
 
-# ================= SIDEBAR =================
+# SIDEBAR 
 st.sidebar.markdown("## 📊 Dashboard")
 menu = st.sidebar.radio("", ["Home", "Add Task", "My Tasks", "Edit Task"])
 st.session_state.page = menu
+#-------------------------------------------------------------------------------------------
 
-# ================= WELCOME =================
+#  WELCOME 
 if st.session_state.page == "Home":
     st.markdown("<div style='text-align:center'>", unsafe_allow_html=True)
 
@@ -82,8 +85,9 @@ if st.session_state.page == "Home":
     ✔ Mark tasks as done  
     """)
     st.markdown("</div>", unsafe_allow_html=True)
+#-------------------------------------------------------------------------------
 
-# ================= ADD TASK =================
+#  ADD TASK 
 elif st.session_state.page == "Add Task":
     i = st.session_state.current_task
     st.markdown(f"## ➕ Add Task {i}")
@@ -147,8 +151,9 @@ elif st.session_state.page == "Add Task":
                 st.session_state.current_task = 1
                 st.session_state.page = "My Tasks"
                 st.rerun()
+#--------------------------------------------------------------------------------------------------------------------
 
-# ================= MY TASKS =================
+#  MY TASKS
 elif st.session_state.page == "My Tasks":
     st.markdown("## 📋 My Tasks")
 
@@ -173,8 +178,9 @@ elif st.session_state.page == "My Tasks":
                     conn.commit()
                     st.rerun()
             st.divider()
+#---------------------------------------------------------------------------------------------------------------------
 
-# ================= EDIT TASK =================
+# EDIT TASK 
 elif st.session_state.page == "Edit Task":
     st.markdown("## ✏️ Edit Tasks")
 
@@ -203,4 +209,4 @@ elif st.session_state.page == "Edit Task":
                     except:
                         st.error("❌ Duplicate task not allowed")
 
-
+#-----------------------------------------------------------------------------------------------------------------------
