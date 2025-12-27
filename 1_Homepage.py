@@ -45,7 +45,7 @@ if st.session_state.page == "home" :
     <h1 style= 'margin-top: 12px; color: blue; font-weight: Bold;'>MATTERS MOST.</h>''' , unsafe_allow_html=True)
 
     st.write("### :grey[ Smart Task prioritizer powered by deadline urgency "
-    "and intensity levels . Get automatic prioritization , visual roadmaps and email " \
+    "and priority levels . Get automatic prioritization , visual roadmaps and email " \
     "reminders to stay on top of your work.]")
 
     
