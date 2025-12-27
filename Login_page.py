@@ -1,24 +1,35 @@
 import streamlit as st 
-import sqlite3 as sql 
-import hashlib as hash
+import sqlite3 as sql
+from database import database_connection
+import hashlib as hash 
 
-st.set_page_config(page_title= "Tasky Login " , page_icon="🔒" , layout="wide")
+def hash_pass(password):
+    return hash.sha256(password.encode()).hexdigest()
 
-# def database_connection():
-#     connection = sql.connect("database.db")
-#     connection.row_factory = sql.Row
-#     return connection
 
-con = sql.connect("database.db")
-cursor = con.cursor()
-# cursor.execute(''' CREATE TABLE IF NOT EXISTS demo ( id INT AUTO_INCREMENT PRIMARY KEY , 
-#                name TEXT(15) NOT NULL , mail TEXT(20) UNIQUE NOT NULL 
-#                , password TEXT(10) UNIQUE NOT NULL )''')
-# cursor.execute("INSERT INTO demo VALUES(2 ,'vansh' , 'vardaanabbi20@gmail.com' , 'vansh.abbi@2005' )")
-cursor.execute("SELECT * FROM demo ")
-cursor.fetchall()
-con.commit()
-con.close()
+
+def signup(name , email , password):
+    connection = database_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute('''
+        INSERT INTO Tasky_Users (name , email , password) VALUES (? , ? , ?)''' 
+        , (name , email , hash_pass(password)) )
+        connection.commit()
+        return True
+    except sql.IntegrityError:
+        return False
+    finally :
+        connection.close()
+                       
+def login(email , password):
+    connection = database_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM Tasky_Users WHERE email = ? AND password = ?",(email , hash_pass(password)))                    
+    user = cursor.fetchone()
+    connection.close()
+    return user 
+
 
 
 
