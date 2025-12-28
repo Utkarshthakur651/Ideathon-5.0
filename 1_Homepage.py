@@ -53,7 +53,7 @@ if st.session_state.page == "home" :
         st.session_state.show_login = True
 
     st.image("https://imgs.search.brave.com/7tzPh-SwK6fXjCzdSftWXJ0rds7hfcsMLpnkaHLmq68/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9nbG9h/dC5jb20vd3AtY29u/dGVudC91cGxvYWRz/L3NodXR0ZXJzdG9j/a18yNDU1MjM5NTY5/LmpwZw", width= 800)
-    st.sidebar.success("Select a page above")
+
     st.markdown("<p style = 'text-align: center; font-family: Times New Roman ; font-size: 35px; font-weight: Bold'>Everything you need to Stay Organized</p>" , unsafe_allow_html=True)
     st.markdown("<p style = 'text-align: center; font-family: Times New Roman ; font-size: 22px; color: gray'> Powerful features designed for productivity professionals</p>" , unsafe_allow_html=True)
 
