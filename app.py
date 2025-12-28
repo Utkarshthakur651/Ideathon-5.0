@@ -1,6 +1,7 @@
 import streamlit as st 
 from database import Create_Users
-from Login_page import signup , login 
+from Login_page import signup , login
+from dashboard import dashboard 
 
 
 st.set_page_config(
@@ -210,29 +211,49 @@ if st.session_state.show_login and not st.session_state.logged_in :
     login_popup()
 
 if st.session_state.logged_in :
-    st.session_state.page = "dashboard"
-    st.markdown("""
-<style>
-div.stButton > button {
-    background-color: #e74c3c;
-    color: white;
-    border-radius: 8px;
-    padding: 0.5em 1.5em;
-    font-weight: bold;
-}
-div.stButton > button:hover {
-    background-color: #c0392b;
-    color: white;
-}
-</style>
-""", unsafe_allow_html=True)
-    st.success(f"## Welcome {st.session_state.user[1]}")
-    st.write("## **This is your Tasky Dashboard** ")
-    st.info(" Refreshing the page may log you out ")
+    dashboard()
 
-if st.session_state.logged_in :
-    if st.button("Logout"):
-        st.session_state.logged_in = False
-        st.session_state.user = None
-        st.session_state.page = "home"
-        st.rerun()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    # st.session_state.page = "dashboard"
+    # st.markdown("""
+    # <style>
+    # div.stButton > button {
+    #     background-color: #e74c3c;
+    #     color: white;
+    #     border-radius: 8px;
+    #     padding: 0.5em 1.5em;
+    #     font-weight: bold;
+    # }
+    # div.stButton > button:hover {
+    #     background-color: #c0392b;
+    #     color: white;
+    # }
+    # </style>
+    # """, unsafe_allow_html=True)
+    # st.success(f"## Welcome {st.session_state.user[1]}")
+    # st.write("## **This is your Tasky Dashboard** ")
+    # st.info(" Refreshing the page may log you out ")
+
+    # if st.button("Logout"):
+    #     st.session_state.logged_in = False
+    #     st.session_state.user = None
+    #     st.session_state.page = "home"
+    #     st.rerun()
