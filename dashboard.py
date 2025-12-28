@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     task TEXT UNIQUE,
     deadline TEXT,
-    difficulty INTEGER,
-    done INTEGER DEFAULT 0
+    priority INTEGER,
+    task_status INTEGER DEFAULT 0
 )
 """)
 conn.commit()
@@ -94,7 +94,7 @@ elif st.session_state.page == "Add Task":
 
     task = st.text_input("📝 Task Description", key=f"task_{i}")
     deadline = st.date_input("📅 Deadline", min_value=date.today(), key=f"date_{i}")
-    difficulty = st.slider("🔥 Difficulty", 1, 5, key=f"diff_{i}")
+    priority = st.slider("🔥 Priority", 1, 5, key=f"diff_{i}")
 
     if st.session_state.error:
         st.error(st.session_state.error)
@@ -108,7 +108,7 @@ elif st.session_state.page == "Add Task":
             st.rerun()
 
     with col2:
-        if st.button("➡ Next"):
+        if st.button("Next ➡"):
             if task.strip() == "":
                 st.session_state.error = "❌ Task cannot be empty"
             elif task in [t["task"] for t in st.session_state.tasks_data.values()]:
@@ -117,7 +117,7 @@ elif st.session_state.page == "Add Task":
                 st.session_state.tasks_data[i] = {
                     "task": task,
                     "deadline": deadline,
-                    "difficulty": difficulty
+                    "priority": priority
                 }
                 st.session_state.current_task += 1
                 st.session_state.error = ""
@@ -133,14 +133,14 @@ elif st.session_state.page == "Add Task":
                 st.session_state.tasks_data[i] = {
                     "task": task,
                     "deadline": deadline,
-                    "difficulty": difficulty
+                    "priority": priority
                 }
 
                 for t in st.session_state.tasks_data.values():
                     try:
                         cursor.execute(
-                            "INSERT INTO tasks (task, deadline, difficulty) VALUES (?, ?, ?)",
-                            (t["task"], str(t["deadline"]), t["difficulty"])
+                            "INSERT INTO tasks (task, deadline, priority) VALUES (?, ?, ?)",
+                            (t["task"], str(t["deadline"]), t["priority"])
                         )
                     except:
                         pass
@@ -157,22 +157,22 @@ elif st.session_state.page == "Add Task":
 elif st.session_state.page == "My Tasks":
     st.markdown("## 📋 My Tasks")
 
-    cursor.execute("SELECT id, task, deadline, difficulty, done FROM tasks")
+    cursor.execute("SELECT id, task, deadline, priority , task_status FROM tasks")
     rows = cursor.fetchall()
 
     if not rows:
         st.info("No tasks yet.")
     else:
-        for tid, task, deadline, difficulty, done in rows:
-            status = "✅ Done" if done else "⏳ Pending"
+        for tid, task, deadline, priority , task_status in rows:
+            status = "✅ Done" if task_status else "⏳ Pending"
             st.markdown(f"""
             ### 📝 {task}
             **📅 Deadline:** {deadline}  
-            **🔥 Difficulty:** {difficulty}  
+            **🔥 Priority:** {priority}  
             **📌 Status:** {status}
             """)
 
-            if not done:
+            if not task_status :
                 if st.button("✔ Mark as Done", key=f"done_{tid}"):
                     cursor.execute("UPDATE tasks SET done=1 WHERE id=?", (tid,))
                     conn.commit()
@@ -184,25 +184,25 @@ elif st.session_state.page == "My Tasks":
 elif st.session_state.page == "Edit Task":
     st.markdown("## ✏️ Edit Tasks")
 
-    cursor.execute("SELECT id, task, deadline, difficulty FROM tasks WHERE done=0")
+    cursor.execute("SELECT id, task, deadline, priority FROM tasks WHERE task_status=0")
     rows = cursor.fetchall()
 
     if not rows:
         st.info("No editable tasks available.")
     else:
-        for tid, task, deadline, difficulty in rows:
+        for tid, task, deadline, priority in rows:
             with st.expander(f"✏️ Edit: {task}"):
                 new_task = st.text_input("Task", task, key=f"et_{tid}")
                 new_deadline = st.date_input("Deadline", date.fromisoformat(deadline), key=f"ed_{tid}")
-                new_diff = st.slider("Difficulty", 1, 5, difficulty, key=f"ef_{tid}")
+                new_priority = st.slider("Difficulty", 1, 5, priority , key=f"ef_{tid}")
 
                 if st.button("💾 Update Task", key=f"up_{tid}"):
                     try:
                         cursor.execute("""
                             UPDATE tasks
-                            SET task=?, deadline=?, difficulty=?
+                            SET task=?, deadline=?, priority=?
                             WHERE id=?
-                        """, (new_task, str(new_deadline), new_diff, tid))
+                        """, (new_task, str(new_deadline), new_priority, tid))
                         conn.commit()
                         st.success("✅ Task updated!")
                         st.rerun()
